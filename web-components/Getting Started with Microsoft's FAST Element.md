@@ -8,9 +8,9 @@ tags: #webcomponents, #webdev, #javascript, #html
 
 If you haven't heard already, web components have started to take off in popularity. The features they bring to the table is very compelling. Among them are: framework-agnostic reusable components, strong style encapsulation, and blazingly fast performance.
 
-A few of the more popular tools for building web component libraries include [lit](https://lit.dev), [StencilJS](https://stenciljs.com/), and even popular JavaScript frameworks (you can play with some of them at [webcomponents.dev](https://webcomponents.dev/)), but for the last few weeks I have had the opportunity to work with [Microsoft's FAST Element](https://fast.design) and have had fun working with it.
+A few of the more popular tools for building web component libraries include [lit](https://lit.dev), [StencilJS](https://stenciljs.com/), and even the popular JavaScript frameworks can output web components now (you can play with some of them at [webcomponents.dev](https://webcomponents.dev/)), but for the last few weeks I have had the opportunity to work with [Microsoft's FAST Element](https://fast.design) and I am pretty impressed with it.
 
-One thing that I struggled with as I started out, was finding a standard way to easily stand up dev environments so I could experiment and ideate with FAST components. The FAST team doesn't provide a way (yet), so I went ahead and [built a quick one](https://www.npmjs.com/package/create-fast-element) for us to experiment with. I will be using it to generate the examples used in this article.
+One thing that I struggled with as I started out, was finding a standard way to stand up dev environments so I could experiment and ideate with FAST components. The FAST team doesn't provide a way (yet), so I went ahead and [built a quick one](https://www.npmjs.com/package/create-fast-element) for us to experiment with. I will be using it to generate the examples used in this article.
 
 In your terminal or command environment run the following command and follow the instructions to set up your local environment:
 
@@ -48,7 +48,7 @@ export * from './my-search'; // added for our new component
 
 ### Adding Stories
 
-Storybook provides us with a great workspace for us to build and experiment with our components. Once we set up the initial file, our custom elements manifest will handle a lot of the heavy lifting for us.
+Storybook provides a great workspace for us to build and experiment with our components. Once we set up the initial file, our custom elements manifest will handle a lot of the heavy lifting for us.
 
 To get started, create a file called `/my-search/my-search.stories.ts` and add the following contents:
 
@@ -68,17 +68,17 @@ export const Default: any = Template.bind({});
 Default.args = {};
 ```
 
-Now, we can start Storybook with the following command and we should see a new section on in the left column - `Components > My Search > Default`.
+Now, we can start Storybook with the following command:
 
 ```bash
 npm run dev
 ```
 
-If you see a blank page when you click on the `Default` page, don't worry. We haven't added anything for our component to render yet. Let's do that now.
+Once Storybook opens in a new browser tab, we should see a section on in the left column - `Components > My Search > Default`. The `Default` page will be blank. If you inspect the white canvas, you will see our component on the page, but since we haven't given it anything to render the browser treats is like an empty `<span>` element. Let's add some content.
 
 ### Adding HTML
 
-To add HTML to our component, let's update out component's class decorator with the following code:
+To add HTML to our component, let's update out component's class decorator in `src/my-search/index.ts` with the following code:
 
 ```ts
 @customElement({
@@ -103,7 +103,7 @@ You should now see the label, input field, and search button for our component r
 
 ## Attributes or Properties
 
-Regular HTML element have attributes (sometimes called properties) that you can pass values to in order to create a specific behavior. For example, the `input` element has attributes like `type`, `name`, `value`, and `disabled`. Depending on the values that are provided to them, the element will behave in a certain way. When we create custom elements or web components, we can define our own attributes and map them to a behavior.
+Regular HTML elements have attributes (sometimes called properties) that you can pass values to create a specific behavior. For example, the `input` element has attributes like `type`, `name`, `value`, and `disabled`. Those values will make the element look and behave a certain way. Since we are creating _custom elements_, we can define our own attributes and map them to a behavior.
 
 Let's start with making it possible to change the label for the input field. FAST uses the `@attr` decorator to identify these fields. We can add it to our component class along with the type and default value.
 
@@ -119,7 +119,7 @@ Again, you will need to update import statement to include the new `attr` decora
 import { FASTElement, customElement, html, attr } from '@microsoft/fast-element';
 ```
 
-Also, make sure to update the jsDoc comment above the class so that the values can be added to the custom element manifest and synced up with Storybook.
+Also, make sure to update the jsDoc comment above the class so that the values get defined in the custom element manifest and synced up with Storybook.
 
 ```ts
 /**
@@ -140,7 +140,7 @@ To help provide some autocomplete functionality, we can add our component's clas
 template: html<MySearch>`
 ```
 
-Now, let's replace the "My Search" text with the value provided in the attribute field. We can do this with some template string interpolation and an arrow function (this helps with efficient template updates).
+Now, let's replace the "My Search" text with the value provided in the attribute field. We can do this with some template string interpolation and an arrow function that returns our attribute (calling attributes and methods using this arrow function syntax is important for efficient template updates).
 
 ```ts
 template: html<MySearch>`
@@ -162,7 +162,7 @@ const Template = (args: any) => `
 `;
 ```
 
-Now let's make this a little more useful by wiring it up to the Storybook page so we can adjust the values without having to make any code changes.
+Rather than making a code change every time we want to see different values passed to our component, we can leverage Storybook controls and interact with our components though the UI.
 
 ```ts
 const Template = (args: any) => `
@@ -170,7 +170,7 @@ const Template = (args: any) => `
 `;
 ```
 
-***NOTE:*** I'm not sure if this is a bug or if this feature is coming soon, but for some reason the default value is not automatically defined, so we will need to add it to the `args` section of our default export.
+For some reason the default value is not automatically defined, so we will need to add it to the `args` section of our default export.
 
 ```ts
 export default {
@@ -182,15 +182,15 @@ export default {
 };
 ```
 
-If you haven't noticed already, In the "Addons" panel under the "Controls" tab you should see a section called "Properties" with an input for the `label` attribute.
+In the "Addons" panel under the "Controls" tab you should see a section called "Properties" with an input for the `label` attribute.
 
-If you don't see the "Addons" panel at the right or bottom of where your component is rendered, click the menu button in the upper-right side of the page and select "Show addons" (or press `A` on your keyboard). We will be using that a lot.
+If you don't see the "Addons" panel to the right or bottom of your component, click the menu button in the upper-left side of the page and select "Show addons". We will be using that a lot.
 
 ## Slots
 
-Attributes are a great way to pass data like `strings`, `numbers`, `objects`, and `arrays` into components, but sometimes you need to be able to pass markup or HTML into a component. That's exactly what [slots](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/slot) are for. It is basically a placeholder for your content to go.
+Attributes are a great way to pass data like `strings`, `numbers`, `objects`, and `arrays` into components, but sometimes you need to be able to pass markup or HTML into a component. That's exactly what [slots](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/slot) are for. It's basically a placeholder for your content to go.
 
-In our component, we will use a `slot` so we can pass content into our search `button`. Let's start by updating our template with a slot inside of the button. We can also define default content, if nothing is supplied, by adding between the opening and closing `<slot>` tags.
+In our component, we will use a `slot` so we can pass content into our search `button`. Let's start by updating our template with a slot inside of the button. We can also define default content by adding it between the opening and closing `<slot>` tags. If slotted content exists, it will override what we have added between the tags.
 
 ```ts
 template: html<MySearch>`
@@ -236,7 +236,7 @@ const Template = (args: any) => `
 `;
 ```
 
-New we can pass in any value we want like "Submit" or an emoji ("😉"). We can even create a new template and pull in an icon library.
+New we can pass in any value we want like "Submit" or an emoji ("😉"). We can even create a new template in Storybook and pull in an icon library.
 
 ```ts
 // using Bootstrap icons - https://icons.getbootstrap.com/
@@ -253,13 +253,13 @@ Icon.args = {
 
 ## Events
 
-We can sue `attributes` and `slots` to pass data into our components, but sometimes we need to get data out of our components. We can do this through emitting events.
+We use `attributes` and `slots` to pass data into our components, but sometimes we need to get data out of our components. We can do this through emitting events.
 
-We interact with native HTMl elements all of the time - `onClick`, `onInput`, `onBlur`, etc. FAST makes this pretty easy for us using the `$emit()` method provided in the `FASTElement` class our component inherits from.
+We interact with native HTMl element events all of the time - `onClick`, `onInput`, `onBlur`, etc. FAST makes this pretty easy for us using the `$emit()` method provided in the `FASTElement` class our component inherits from.
 
 ### Listening for Events
 
-In our component, we want to emit an event any time a user triggers the [search](https://developer.mozilla.org/en-US/docs/Web/API/HTMLInputElement/search_event) event on our input or clicks on our search button. To do this, let's add two event handler methods to our component class that will emit our own `find` event.
+In our component, we want to emit an event any time a user triggers the [search event](https://developer.mozilla.org/en-US/docs/Web/API/HTMLInputElement/search_event) on our input or clicks on our search `button`. To do this, let's add two event handler methods to our component class that will emit our own "find" event.
 
 ```ts
 export class MySearch extends FASTElement {
@@ -275,7 +275,7 @@ export class MySearch extends FASTElement {
 }
 ```
 
-Now we can wire them up to our template.
+Now we can wire the methods up to our component's template.
 
 ```ts
 template: html<MySearch>`
@@ -295,15 +295,15 @@ Now we should be able to listen for an `onFind` event on our `<my-search>` eleme
 
 ```ts
 // select the element from the DOM
-const mySearch = document.querySelector('my-element');
+const mySearch = document.querySelector('my-search');
 
-// add an event listenr for our custom event and log it to the console
+// add an event listener for our custom event and log it to the console
 mySearch.addEventListener('find', e => console.log(e));
 ```
 
 ### Capturing Events in Storybook
 
-Rather than having to constantly add event listeners to our code or to the console any time we want to test our events, we can actually wire them up in Storybook and it will capture it for us. In our story's default export, we add a new `parameters` property to the object where we can define our custom events.
+Rather than having to constantly add event listeners to our code or to the console any time we want to test our events, we can wire them up in Storybook and it will capture it for us. In our story's default export, we add a new `parameters` property to the object where we can define our custom events.
 
 ```ts
 export default {
@@ -323,19 +323,19 @@ export default {
 };
 ```
 
-Now can we can see the event logged in the "Actions" tab along with the event information whenever our `filter` event is triggered.
+Now can we can see the event logged in the "Actions" tab along with the event information whenever our `filter` event is emitted.
 
-### Using the `ref()` Directive
+### Using Directives
 
-The last thing we need to do is to add our input value to the emitted event so we can use it. We can select an element within our custom element using a variation of `querySelector`.
+The last thing we need to do is to add our input value to the emitted event so we can use it. We can select an element within our custom element using `querySelector`.
 
 ```ts
 const input = this.shadowRoot.querySelector('input');
 ```
 
-There's nothing wrong with this approach, but FAST provides us with a number of [directives](https://www.fast.design/docs/fast-element/using-directives) that make common tasks simpler. In this case we can use the [`ref()`](https://www.fast.design/docs/fast-element/using-directives#the-ref-directive) directive to add a reference to our element in the component's context (`this`).
+There's nothing wrong with this approach, but FAST provides us with a number of [directives](https://www.fast.design/docs/fast-element/using-directives) that make common tasks simpler. In this case we can use the [`ref()` directive](https://www.fast.design/docs/fast-element/using-directives#the-ref-directive) to reference the element in the component's context (`this`).
 
-First, let's add `ref(;searchInput')` to our input element (make sure you import `ref` from `@microsoft/fast-element`).
+First, let's add `ref('searchInput')` to our input element (make sure you import `ref` from `@microsoft/fast-element`).
 
 ```ts
 template: html<MySearch>`
@@ -349,7 +349,7 @@ template: html<MySearch>`
 `,
 ```
 
-Next, we can add a property to our class that matches the string in our ref and give it a type of `HTML InputElement`.
+Next, we can add a property to our class that matches the string in our ref and assign it the type `HTMLInputElement`.
 
 ```ts
 export class MySearch extends FASTElement {
@@ -369,7 +369,7 @@ private buttonClickHandler() {
 }
 ```
 
-When we go back to Storybook, input some values, and click the search button, we should now see the input's value under the `detail` property of the event data.
+When we go back to Storybook, input a value, and press the "Enter" key or click the search button, we should now see the input's value under the `detail` property of the event data.
 
 ```ts
 {
@@ -379,7 +379,7 @@ When we go back to Storybook, input some values, and click the search button, we
     composed: true,
     currentTarget: HTMLDivElement,
     defaultPrevented: false,
---> detail: "ergferf",
+    detail: "ergferf",      // <--
     eventPhase: 3,
     isTrusted: false,
     returnValue: true,
@@ -392,7 +392,7 @@ When we go back to Storybook, input some values, and click the search button, we
 
 ## Styling
 
-I am planning on creating a separate post dedicated to styling web components, so I will keep this section simple.
+I am planning on creating a separate post dedicated to styling web components, so this will be a basic overview of how to add styling to FAST elements.
 
 We add styles by adding a `styles` property to our component definition class decorator and prefixing our template string with `css`.
 
@@ -421,7 +421,7 @@ import { FASTElement, customElement, html, attr, css } from '@microsoft/fast-ele
 Let's add some basic styling and then we can break it down.
 
 ```ts
-styles: css`
+styles: css<MySearch>`
     :host {
         --font-size: 1rem;
         --padding: 0.25rem;
@@ -447,17 +447,17 @@ styles: css`
 
 The first thing you may have noticed is the strange `:host` selector. This targets our custom element's tag - `<my-search>`. This allows us to apply styles to the tag as well as define global styles for the element.
 
-Custom elements apply the `display: inline;` style by default, so in our case we added the `display: block;` to ensure this would render the full width of the parent.
+Custom elements apply the `display: inline;` style by default, so in our case we added the `display: block;` to ensure this would render the full width of the element's parent.
 
 ### Generic Selectors
 
-You may have also noticed that the HTML elements are selected. Don't freak out, this was intentional. One of the nice things about the [Shadow DOM](https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_shadow_DOM) is that it provides a layer of encapsulation. This means the component isn't affected by the styles outside of the component and the component's styles don't affect the rest of the application. I don't have to worry about these styles affecting any of the other inputs or buttons in my application.
+You may have also noticed that we have HTML elements as selectors. _Don't freak out_, this was intentional. One of the nice things about the [Shadow DOM](https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_shadow_DOM) is that it provides a layer of encapsulation. This means the component isn't affected by the styles outside of the component and the component's styles don't bleed out to the rest of the application. We don't have to worry about these styles affecting any of the other `inputs` or `buttons` in our application.
 
-***Note:*** I don't recommend you build your components this way. I did it merely to prove a point.
+__NOTE:__ I don't recommend you build your components this way. I did it purely for demonstration purposes.
 
 ### CSS Custom Properties or CSS Variables
 
-With that being said, there are still some ways we can control styles in our component. One fo them is with [CSS Custom Properties (aka - CSS Variables)](https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties). With these defined, we can apply custom styles to our components.
+Since we cannot affect the styles of our components externally, we can add [CSS Custom Properties (aka - CSS Variables)](https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties) to our component to prove some customizations. With these defined, we can apply targeted custom styles to our components.
 
 ```css
 my-search {
@@ -492,7 +492,7 @@ First, we will need to update our jsDoc with our new custom properties to includ
  */
 ```
 
-You should now see a new section in controls tab called "CSS Custom Properties" with our properties listed. Let's add some default values.
+We should now see a new section in controls tab called "CSS Custom Properties" with our properties listed. Let's add some default values to our story's default export.
 
 ```ts
 export default {
@@ -507,7 +507,7 @@ export default {
 };
 ```
 
-Now, let's wire them up to our Storybook template.
+Now, let's wire them up to our Storybook template (feel free to do the same with our Icon template).
 
 ```ts
 const Template = (args: any) => `
